@@ -27,10 +27,11 @@ body {
   padding: 25px;
   text-align: center;
   color: #fff;
-  background: rgba(103, 102, 101, 0.5); /* semi-transparent card background */
+   background-image: url("https://i.pinimg.com/736x/f3/41/d6/f341d6bce7de25cfdbb6dba8f5d39997.jpg");
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   transition: transform 0.3s ease;
+  opacity: 90%;
 }
 
 .container:hover {
@@ -42,6 +43,7 @@ body {
   font-size: 2.5rem;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
   margin-bottom: 10px;
+  padding-top: 50px;
 }
 
 .container p {
@@ -74,7 +76,8 @@ body {
 .input-wrapper {
   position: relative;
   width: 100%;
-  margin: 15px auto;
+
+ 
 }
 .input-wrapper i {
   position: absolute;
