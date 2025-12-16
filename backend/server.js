@@ -1,11 +1,11 @@
 const express = require("express");
-const multer = require("multer");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const fs = require("fs");
 
 const app = express();
 const PORT = 5000;
@@ -21,30 +21,14 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// ===== Serve static files =====
-app.use("/css", express.static(path.join(__dirname, "css")));
-app.use("/js", express.static(path.join(__dirname, "js")));
-app.use("/images", express.static(path.join(__dirname, "images")));
+// ===== Static files =====
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin", express.static(path.join(__dirname, "admin")));
 
-// ===== Multer setup =====
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + ".png");
-  }
-});
-const upload = multer({ storage: storage });
-
 // ===== MongoDB connection =====
-mongoose.connect("mongodb://127.0.0.1:27017/university", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect("mongodb://127.0.0.1:27017/university")
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error(err));
 
 // ===== User Schema =====
 const userSchema = new mongoose.Schema({
@@ -57,15 +41,20 @@ const userSchema = new mongoose.Schema({
   photo: String,
   createdAt: { type: Date, default: Date.now }
 });
+
 const User = mongoose.model("User", userSchema);
 
-// ===== Admin login (demo) =====
+// ===== Admin login =====
 const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD_HASH = bcrypt.hashSync("123456", 10);
 
-app.post("/admin/login", async (req, res) => {
+app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
-  if (username === ADMIN_USERNAME && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
+
+  if (
+    username === ADMIN_USERNAME &&
+    bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
+  ) {
     req.session.admin = true;
     res.json({ success: true });
   } else {
@@ -78,31 +67,49 @@ app.get("/admin/logout", (req, res) => {
   res.redirect("/admin/login.html");
 });
 
-// ===== Register endpoint =====
-app.post("/register", upload.none(), async (req, res) => {
+// ===== REGISTER (XALKA MUHIIMKA AH) =====
+app.post("/register", async (req, res) => {
   const { fullname, phone, email, course, department, nationality, photo } = req.body;
 
   let photoFilename = null;
+
   if (photo) {
     const base64Data = photo.replace(/^data:image\/png;base64,/, "");
-    photoFilename = `${Date.now()}.png`;
-    require("fs").writeFileSync(path.join(__dirname, "uploads", photoFilename), base64Data, "base64");
+    photoFilename = Date.now() + ".png";
+
+    fs.writeFileSync(
+      path.join(__dirname, "uploads", photoFilename),
+      base64Data,
+      "base64"
+    );
   }
 
-  const user = new User({ fullname, phone, email, course, department, nationality, photo: photoFilename });
+  const user = new User({
+    fullname,
+    phone,
+    email,
+    course,
+    department,
+    nationality,
+    photo: photoFilename
+  });
+
   await user.save();
 
-  res.json({ success: true, message: "Registration successful!" });
+  res.json({ success: true });
 });
 
-// ===== Admin API to get all users =====
+// ===== ADMIN USERS =====
 app.get("/admin/users", async (req, res) => {
-  if (!req.session.admin) return res.status(401).json({ success: false, message: "Unauthorized" });
+  if (!req.session.admin) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const users = await User.find().sort({ createdAt: -1 });
   res.json(users);
 });
 
 // ===== Start server =====
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running → http://localhost:${PORT}`);
 });
