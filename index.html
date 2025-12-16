@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>University of himalayan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="background"></div>
+
+  <div class="container">
+    <h1>Himalayan university scholarhip</h1>
+    <p>Before you enroll in admission, please register yourself</p>
+
+    <button id="showFormBtn" class="show-btn">Register Here</button>
+
+    <form id="registerForm" class="register-form" style="display:none;">
+      <h3>Register for Admission</h3>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="fullname" placeholder="Full Name" required>
+      </div>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-phone"></i>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+      </div>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="email" placeholder="Email Address" required>
+      </div>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <input type="text" id="course" placeholder="Course you want to enroll" required>
+      </div>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-building-columns"></i>
+        <input type="text" id="department" placeholder="Department" required>
+      </div>
+
+      <div class="input-wrapper">
+        <i class="fa-solid fa-flag"></i>
+        <input type="text" id="nationality" placeholder="Nationality" required>
+      </div>
+
+      <button type="submit">Submit Admission</button>
+      <p id="formMsg"></p>
+    </form>
+  
+
+    <div class="camera-area">
+      <video id="video" autoplay playsinline></video>
+      <img id="photo" alt="">
+      <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
